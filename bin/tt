@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+require 'toptranslation_cli'
+
+command = ARGV[0]
+
+case command
+when "--help"
+  ToptranslationCli::Info.print_help
+when "--version"
+  ToptranslationCli::Info.print_version
+when "init"
+  ToptranslationCli::Initializer.run
+when "push"
+  ToptranslationCli::Push.run
+when "pull"
+  ToptranslationCli::Pull.run
+when "check"
+  ToptranslationCli::Check.run
+end
