@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PlaceholderPath
   def initialize(path_definition)
     @path_definition = path_definition
@@ -14,6 +16,7 @@ class PlaceholderPath
   end
 
   private
+
     # Replaces UNIX wildcards in a path definition and returns a regular
     # expression of the path definition
     # e.g. "/config/**/*{locale_code}.po"  => /\/config\/.*de\.po/
@@ -27,10 +30,10 @@ class PlaceholderPath
 
       string = string.gsub(/\./, '\.')
       string = string.gsub(/((?<!\*)\*(?!\*))|(\*\*)/, '.*') # (1)
-      string = string.gsub(".*/.*", ".*") # (2)
+      string = string.gsub('.*/.*', '.*') # (2)
 
-      splits = string.split("{locale_code}") # (3)
-      path = splits.map { |string| "(#{ string })" }.join(locale_code) # (4)
+      splits = string.split('{locale_code}') # (3)
+      path = splits.map { |segment| "(#{segment})" }.join(locale_code) # (4)
 
       Regexp.new(path)
     end

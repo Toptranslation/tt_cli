@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 
 module ToptranslationCli
@@ -8,7 +10,7 @@ module ToptranslationCli
       ToptranslationCli.configuration.use_examples
       ToptranslationCli.configuration.save
 
-      puts "See https://developer.toptranslation.com for configuration instructions."
+      puts 'See https://developer.toptranslation.com for configuration instructions.'
     end
   end
 end
