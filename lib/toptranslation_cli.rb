@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'paint'
 require 'toptranslation_api'
 
@@ -13,18 +15,17 @@ require 'toptranslation_cli/version'
 
 module ToptranslationCli
   class << self
-    attr_accessor :configuration
-  end
+    attr_writer :configuration
 
-  def self.configuration
-    @configuration ||= Configuration.new
-  end
+    def configuration
+      @configuration ||= Configuration.new
+    end
 
-  def self.connection
-    @connection ||= ToptranslationApi.new( access_token: configuration.access_token,
-                                        base_url: configuration.api_base_url,
-                                        files_url: configuration.files_base_url,
-                                        verbose: true
-                                      )
+    def connection
+      @connection ||= ToptranslationApi.new(access_token: configuration.access_token,
+                                            base_url: configuration.api_base_url,
+                                            files_url: configuration.files_base_url,
+                                            verbose: true)
+    end
   end
 end

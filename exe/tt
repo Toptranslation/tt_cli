@@ -1,20 +1,21 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'toptranslation_cli'
 
 command = ARGV[0]
 
 case command
-when "--help"
+when '--help'
   ToptranslationCli::Info.print_help
-when "--version"
+when '--version'
   ToptranslationCli::Info.print_version
-when "init"
+when 'init'
   ToptranslationCli::Initializer.run
-when "push"
+when 'push'
   ToptranslationCli::Push.run
-when "pull"
+when 'pull'
   ToptranslationCli::Pull.run
-when "check"
+when 'check'
   ToptranslationCli::Check.run
 end

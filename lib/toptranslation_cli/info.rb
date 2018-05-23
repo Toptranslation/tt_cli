@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ToptranslationCli
   class Info
     def self.print_help
@@ -5,7 +7,7 @@ module ToptranslationCli
 
       puts "\n"
       puts "Usage:\t\ttt [command]\n\n"
-      puts "Commands:"
+      puts 'Commands:'
       puts "   init\t\tCreates example configuration file toptranslation.json"
       puts "   check\tChecks current configuration"
       puts "   push\t\tUploads local documents"
@@ -19,7 +21,7 @@ module ToptranslationCli
     end
 
     def self.print_version
-      puts "Toptranslation command line client, version #{ VERSION }"
+      puts "Toptranslation command line client, version #{VERSION}"
     end
   end
 end
