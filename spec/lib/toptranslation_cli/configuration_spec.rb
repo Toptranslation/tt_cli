@@ -49,7 +49,7 @@ describe ToptranslationCli::Configuration do
       configuration_example[:api_base_url] = nil
       allow(File).to receive(:read).and_return(configuration_example.to_json)
       ToptranslationCli.configuration.load
-      expect(ToptranslationCli.configuration.api_base_url).to eq('https://api.toptranslation.com/v0')
+      expect(ToptranslationCli.configuration.api_base_url).to eq('https://api.toptranslation.com')
     end
   end
 

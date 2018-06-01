@@ -22,10 +22,10 @@ module ToptranslationCli
     end
 
     def connection
-      @connection ||= ToptranslationApi.new(access_token: configuration.access_token,
-                                            base_url: configuration.api_base_url,
-                                            files_url: configuration.files_base_url,
-                                            verbose: true)
+      @connection ||= Toptranslation.new(access_token: configuration.access_token,
+                                         base_url: configuration.api_base_url,
+                                         files_url: configuration.files_base_url,
+                                         verbose: true)
     end
   end
 end

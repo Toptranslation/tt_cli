@@ -14,7 +14,7 @@ module ToptranslationCli
       @access_token = configuration[:access_token]
       @files = configuration[:files] || []
       @files_base_url = configuration[:files_base_url] || 'https://files.toptranslation.com'
-      @api_base_url = configuration[:api_base_url] || 'https://api.toptranslation.com/v0'
+      @api_base_url = configuration[:api_base_url] || 'https://api.toptranslation.com'
     end
 
     def save

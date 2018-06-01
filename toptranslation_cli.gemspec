@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.metadata      = { 'source_code_uri' => 'https://github.com/Toptranslation/tt_cli' }
 
   s.add_runtime_dependency 'paint', '~> 1.0'
+  s.add_runtime_dependency 'toptranslation_api', '~> 2.0'
   s.add_development_dependency 'rake', '~> 10.0'
   s.add_development_dependency 'rspec', '~> 3.4'
   s.add_development_dependency 'rubocop', '~> 0.56.0'
