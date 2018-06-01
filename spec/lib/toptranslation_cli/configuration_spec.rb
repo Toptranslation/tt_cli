@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-
-describe ToptranslationCli::Configuration do
+RSpec.describe ToptranslationCli::Configuration do
   context :use_examples do
     it 'sets example values' do
       ToptranslationCli.configuration.use_examples
