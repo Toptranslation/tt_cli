@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'toptranslation_cli'
+require 'pry'
 
 RSpec.configure do |config|
   # Run specs in random order to surface order dependencies. If you find an

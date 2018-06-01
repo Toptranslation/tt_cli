@@ -24,6 +24,8 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'paint', '~> 1.0'
   s.add_runtime_dependency 'toptranslation_api', '~> 2.0'
+  s.add_development_dependency 'pry'
+  s.add_development_dependency 'pry-byebug'
   s.add_development_dependency 'rake', '~> 10.0'
   s.add_development_dependency 'rspec', '~> 3.4'
   s.add_development_dependency 'rubocop', '~> 0.56.0'
