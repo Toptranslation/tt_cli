@@ -2,7 +2,7 @@
 
 module ToptranslationCli
   class Configuration
-    attr_accessor :project_identifier, :access_token, :files, :api_base_url, :files_base_url
+    attr_accessor :project_identifier, :access_token, :files, :api_base_url, :files_base_url, :verbose
 
     def load
       configuration = begin
@@ -15,6 +15,7 @@ module ToptranslationCli
       @files = configuration[:files] || []
       @files_base_url = configuration[:files_base_url] || 'https://files.toptranslation.com'
       @api_base_url = configuration[:api_base_url] || 'https://api.toptranslation.com'
+      @verbose = !ENV['VERBOSE'].nil?
     end
 
     def save

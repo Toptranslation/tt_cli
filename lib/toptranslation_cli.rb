@@ -25,7 +25,7 @@ module ToptranslationCli
       @connection ||= Toptranslation.new(access_token: configuration.access_token,
                                          base_url: configuration.api_base_url,
                                          files_url: configuration.files_base_url,
-                                         verbose: true)
+                                         verbose: configuration.verbose)
     end
   end
 end
