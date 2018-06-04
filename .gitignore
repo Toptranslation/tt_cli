@@ -52,3 +52,5 @@ toptranslation.json
 
 # Rubocop remote config
 .rubocop-*
+
+Gemfile.lock

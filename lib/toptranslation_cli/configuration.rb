@@ -2,19 +2,21 @@
 
 module ToptranslationCli
   class Configuration
-    attr_accessor :project_identifier, :access_token, :files, :api_base_url, :files_base_url
+    attr_accessor :project_identifier, :access_token, :files, :api_base_url, :files_base_url, :verbose
 
     def load
       configuration = begin
                         JSON.parse(File.read('toptranslation.json'), symbolize_names: true)
-                      rescue StandardError
-                        {}
+                      rescue StandardError => error
+                        puts Paint['Could not read configuration', :red], error
+                        exit 1
                       end
       @project_identifier = configuration[:project_identifier]
       @access_token = configuration[:access_token]
       @files = configuration[:files] || []
       @files_base_url = configuration[:files_base_url] || 'https://files.toptranslation.com'
-      @api_base_url = configuration[:api_base_url] || 'https://api.toptranslation.com/v0'
+      @api_base_url = configuration[:api_base_url] || 'https://api.toptranslation.com'
+      @verbose = !ENV['VERBOSE'].nil?
     end
 
     def save

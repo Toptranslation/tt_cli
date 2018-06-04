@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-
-describe ToptranslationCli::FileFinder do
+RSpec.describe ToptranslationCli::FileFinder do
   let(:path) { '/foo/{locale_code}/*.yml' }
   let(:path_without_placeholder) { '/foo/*.yml' }
   let(:locale_code) { 'de' }

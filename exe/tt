@@ -18,4 +18,6 @@ when 'pull'
   ToptranslationCli::Pull.run
 when 'check'
   ToptranslationCli::Check.run
+else
+  ToptranslationCli::Info.print_help
 end

@@ -17,7 +17,7 @@ module ToptranslationCli
       puts "Twitter:\t@tt_developers\n\n"
       puts "Websites:\thttps://www.toptranslation.com"
       puts "\t\thttps://developer.toptranslation.com"
-      puts "\t\thttps://github.com/Toptranslation/toptranslation_cli"
+      puts "\t\thttps://github.com/Toptranslation/tt_cli"
     end
 
     def self.print_version
