@@ -7,7 +7,7 @@ module ToptranslationCli
     end
 
     def files(locale_code = '**')
-      Dir.glob(@path_definition['path'].gsub('{locale_code}', locale_code))
+      Dir.glob(@path_definition.gsub('{locale_code}', locale_code))
     end
   end
 end

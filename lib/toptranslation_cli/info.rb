@@ -8,7 +8,7 @@ module ToptranslationCli
       puts "\n"
       puts "Usage:\t\ttt [command]\n\n"
       puts 'Commands:'
-      puts "   init\t\tCreates example configuration file toptranslation.json"
+      puts "   init\t\tCreates example configuration file #{Configuration::FILENAME}"
       puts "   check\tChecks current configuration"
       puts "   push\t\tUploads local documents"
       puts "   pull\t\tPulls remote translations, overwrites local documents"

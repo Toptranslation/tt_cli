@@ -21,7 +21,7 @@ module ToptranslationCli
       end
 
       def check_configuration_file
-        if File.exist?('toptranslation.json')
+        if ToptranslationCli.configuration.exist?
           Paint['ok', :green]
         else
           Paint['configuration file missing', :red]
@@ -75,7 +75,7 @@ module ToptranslationCli
 
         ToptranslationCli.configuration.load
         ToptranslationCli.configuration.files.each do |path_definition|
-          puts " * #{path_definition['path']}: #{matching_files_output(path_definition)}"
+          puts " * #{path_definition}: #{matching_files_output(path_definition)}"
         end
       end
 

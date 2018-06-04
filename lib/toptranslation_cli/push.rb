@@ -6,7 +6,7 @@ module ToptranslationCli
       def run
         ToptranslationCli.configuration.load
         ToptranslationCli.configuration.files.each do |path_definition|
-          placeholder_path = PlaceholderPath.new(path_definition['path'])
+          placeholder_path = PlaceholderPath.new(path_definition)
           project_locales.each do |locale|
             FileFinder.new(path_definition).files(locale.code).each do |path|
               path_with_placeholder = placeholder_path.for_path(path, locale.code)
