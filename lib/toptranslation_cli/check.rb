@@ -50,8 +50,8 @@ module ToptranslationCli
         project_identifier = ToptranslationCli.configuration.project_identifier
         remote_project = begin
                            ToptranslationCli.connection.projects.find(project_identifier)
-                         rescue StandardError
-                           nil
+                         rescue StandardError => e
+                           puts Paint[e, :red]
                          end
 
         if remote_project&.identifier == project_identifier

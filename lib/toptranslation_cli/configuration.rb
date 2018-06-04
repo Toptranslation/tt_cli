@@ -7,8 +7,9 @@ module ToptranslationCli
     def load
       configuration = begin
                         JSON.parse(File.read('toptranslation.json'), symbolize_names: true)
-                      rescue StandardError
-                        {}
+                      rescue StandardError => error
+                        puts Paint['Could not read configuration', :red], error
+                        exit 1
                       end
       @project_identifier = configuration[:project_identifier]
       @access_token = configuration[:access_token]
