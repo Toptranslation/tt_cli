@@ -34,8 +34,9 @@ Creates an `.toptranslation.yml configuration in the current directory with exam
 
 ```bash
 $ tt init
-=> Creating example configuration in '.toptranslation.yml'.
-=> See https://developer.toptranslation.com for configuration instructions.
+Creating example configuration in '.toptranslation.yml'.
+
+See https://developer.toptranslation.com for configuration instructions.
 ```
 
 ### Check configuration
@@ -44,15 +45,15 @@ Checks configuration settings in `.toptranslation.yml` and counts files matching
 
 ```bash
 $ tt check
-=> Toptranslation command line client, version 1.0.0 - Configuration check
+Toptranslation command line client, version 1.0.0 - Configuration check
 
-   Configuration file present: ok
-    * includes access_token:   ok
-    * includes project_identifier: ok
-    * includes files:      ok
+Configuration file present:     ok
+ * includes access_token:       ok
+ * includes project_identifier: ok
+ * includes files:              ok
 
-   Matching files:
-    * config/locales/{locale_code}/**/*.yml: 3 matching files
+Matching files:
+ * config/locales/{locale_code}/**/*.yml: 3 matching files
 ```
 
 ### Push local documents
@@ -76,10 +77,10 @@ $ tt pull
 Displays help page with usage instructions, examples and contact options.
 
 ```
-$ tt --help
-=> Toptranslation command line client, version 1.0.0
-   Usage: tt [command]
-   Commands: ...
+$ tt help
+Toptranslation command line client, version 0.2.0
+
+tt commands: ...
 ```
 
 ### Version
@@ -87,8 +88,8 @@ $ tt --help
 Displays the current version of this software.
 
 ```
-$ tt --version
-=> Toptranslation command line client, version 1.0.0
+$ tt version
+Toptranslation command line client, version 1.0.0
 ```
 
 ## Contact

@@ -2,22 +2,53 @@
 # frozen_string_literal: true
 
 require 'toptranslation_cli'
+require 'thor'
 
-command = ARGV[0]
+class Tt < Thor
+  package_name :tt
 
-case command
-when '--help'
-  ToptranslationCli::Info.print_help
-when '--version'
-  ToptranslationCli::Info.print_version
-when 'init'
-  ToptranslationCli::Initializer.run
-when 'push'
-  ToptranslationCli::Push.run
-when 'pull'
-  ToptranslationCli::Pull.run
-when 'check'
-  ToptranslationCli::Check.run
-else
-  ToptranslationCli::Info.print_help
+  desc :check, 'Check current configuration'
+  def check
+    ToptranslationCli::Check.run
+  end
+
+  desc :help, 'Print usage information'
+  def help
+    version
+
+    super
+
+    puts <<~URLS
+      twitter:
+        @tt_developers (https://twitter.com/tt_developers)
+
+      websites:
+        https://www.toptranslation.com
+        https://developer.toptranslation.com
+        https://github.com/Toptranslation/tt_cli
+    URLS
+  end
+
+  desc :init, "Create an example configuration file #{ToptranslationCli::Configuration::FILENAME}"
+  def init
+    ToptranslationCli::Initializer.run
+  end
+
+  desc :push, 'Upload local documents'
+  def push
+    ToptranslationCli::Push.run
+  end
+
+  desc :pull, 'Download remote translations, overwriting local documents'
+  def pull
+    ToptranslationCli::Pull.run
+  end
+
+  desc :version, 'Print version'
+  def version
+    puts "Toptranslation command line client, version #{ToptranslationCli::VERSION}"
+    puts ''
+  end
 end
+
+Tt.start(ARGV)
