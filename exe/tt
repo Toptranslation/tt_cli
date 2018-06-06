@@ -47,6 +47,16 @@ class Tt < Thor
     ToptranslationCli::Pull.run
   end
 
+  desc :status, 'Show local documents that differ from remote documents'
+  method_option :exit_code,
+                type: :boolean,
+                default: false,
+                desc: 'Set the return code to the total number of changed files'
+  def status
+    changed_documents_amount = ToptranslationCli::Status.run
+    exit changed_documents_amount if options[:exit_code]
+  end
+
   desc :version, 'Print version'
   def version
     puts "Toptranslation command line client, version #{ToptranslationCli::VERSION}"
