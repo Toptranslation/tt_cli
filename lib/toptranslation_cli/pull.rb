@@ -9,7 +9,7 @@ module ToptranslationCli
         ToptranslationCli.configuration.load
         project&.documents&.each do |document|
           project_locales.each do |locale|
-            response = document.download(locale.code, 'yaml')
+            response = document.download(locale.code, file_format: 'yaml')
             next unless response
             path = path(document, locale)
 
