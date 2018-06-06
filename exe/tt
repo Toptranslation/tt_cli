@@ -13,10 +13,13 @@ class Tt < Thor
   end
 
   desc :help, 'Print usage information'
-  def help
+  def help(*args, **kwargs)
+    return super(*args, **kwargs) if !args.empty? || !kwargs.empty?
+
     version
 
-    super
+    # We need to call super without arguments
+    super()
 
     puts <<~URLS
       twitter:
