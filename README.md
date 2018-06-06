@@ -3,22 +3,18 @@ Gem to provide a command line tool for synching documents with the Toptranslatio
 
 ## Configuration
 
-Configuration is stored in `toptranslation.json`. An example configuration can be created with `$ tt init`. The configuration can be checked with `$ tt check` (see Usage: Check configuration).
+Configuration is stored in `.toptranslation.yml`. An example configuration can be created with `$ tt init`. The configuration can be checked with `$ tt check` (see Usage: Check configuration).
 
 ### Example configuration
 
-An example configuration file `toptranslation.json:
+An example configuration file `.toptranslation.yml:
 
-```json
-{
-  "project_identifier": "<PROJECT_IDENTIFIER>",
-  "access_token": "<YOUR_ACCESS_TOKEN>",
-  "files": [
-    {
-      "path": "config/locales/{locale_code}/**/*.yml"
-    }
-  ]
-}
+```yaml
+---
+project_identifier: "<PROJECT_IDENTIFIER>"
+access_token: "<YOUR_ACCESS_TOKEN>"
+files:
+  - config/locales/{locale_code}/**/*.yml
 ```
 
 #### Used attributes:
@@ -34,17 +30,17 @@ An example configuration file `toptranslation.json:
 
 ### Initialisation
 
-Creates an `toptranslation.json configuration in the current directory with example values.
+Creates an `.toptranslation.yml configuration in the current directory with example values.
 
 ```bash
 $ tt init
-=> Creating example configuration in 'toptranslation.json'.
+=> Creating example configuration in '.toptranslation.yml'.
 => See https://developer.toptranslation.com for configuration instructions.
 ```
 
 ### Check configuration
 
-Checks configuration settings in `toptranslation.json` and counts files matching the file path definitions (see configuration).
+Checks configuration settings in `.toptranslation.yml` and counts files matching the file path definitions (see configuration).
 
 ```bash
 $ tt check
@@ -101,6 +97,6 @@ Web: [https://developer.toptranslation.com](https://developer.toptranslation.com
 
 Github: [https://www.github.com/toptranslation](https://www.github.com/toptranslation)
 
-Twitter: [@tt_developers](http://www.twitter.com/tt_developers) or [@toptranslation](http://www.twitter.com/toptranslation) 
+Twitter: [@tt_developers](http://www.twitter.com/tt_developers) or [@toptranslation](http://www.twitter.com/toptranslation)
 
 Mail: tech@toptranslation.com

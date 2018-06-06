@@ -7,7 +7,7 @@ RSpec.describe ToptranslationCli::Configuration do
       expect(ToptranslationCli.configuration).to have_attributes(
         project_identifier: '<PROJECT_IDENTIFIER>',
         access_token: '<YOUR_ACCESS_TOKEN>',
-        files: [{ path: 'config/locales/{locale_code}/**/*.yml' }]
+        files: %w[config/locales/{locale_code}/**/*.yml]
       )
     end
   end
@@ -15,24 +15,24 @@ RSpec.describe ToptranslationCli::Configuration do
   context :load do
     let(:configuration_example) do
       {
-        project_identifier: 'a_custom_project_identifier',
-        access_token: 'a_custom_access_token',
-        files: [{ path: 'config/locales/{locale_code}/**/*.yml' }],
-        api_base_url: 'http://foobar.example.com'
+        'project_identifier' => 'a_custom_project_identifier',
+        'access_token' => 'a_custom_access_token',
+        'files' => %w[config/locales/{locale_code}/**/*.yml],
+        'api_base_url' => 'http://foobar.example.com'
       }
     end
 
     before do
-      allow(File).to receive(:read).and_return(configuration_example.to_json)
+      allow(File).to receive(:read).and_return(Psych.dump(configuration_example))
     end
 
     it 'sets attributes correctly' do
       ToptranslationCli.configuration.load
       expect(ToptranslationCli.configuration).to have_attributes(
-        project_identifier: configuration_example[:project_identifier],
-        access_token:       configuration_example[:access_token],
-        api_base_url:       configuration_example[:api_base_url],
-        files:              configuration_example[:files]
+        project_identifier: configuration_example['project_identifier'],
+        access_token:       configuration_example['access_token'],
+        api_base_url:       configuration_example['api_base_url'],
+        files:              configuration_example['files']
       )
     end
 
@@ -52,10 +52,10 @@ RSpec.describe ToptranslationCli::Configuration do
   end
 
   context :save do
-    it 'calls File.open on toptranslation.json' do
+    it 'calls File.open on .toptranslation.yml' do
       allow(File).to receive(:open)
       ToptranslationCli.configuration.save
-      expect(File).to have_received(:open).with('toptranslation.json', 'w')
+      expect(File).to have_received(:open).with('.toptranslation.yml', 'w')
     end
   end
 end

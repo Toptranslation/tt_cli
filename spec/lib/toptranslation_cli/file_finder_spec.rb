@@ -10,17 +10,17 @@ RSpec.describe ToptranslationCli::FileFinder do
   end
 
   it 'replaces locale_code placeholder' do
-    described_class.new('path' => path).files('de')
+    described_class.new(path).files('de')
     expect(Dir).to have_received(:glob).with("/foo/#{locale_code}/*.yml")
   end
 
   it 'replaces locale_code with wildcard if no locale is given' do
-    described_class.new('path' => path).files
+    described_class.new(path).files
     expect(Dir).to have_received(:glob).with('/foo/**/*.yml')
   end
 
   it 'does not change path if no place_holder is present' do
-    described_class.new('path' => path_without_placeholder).files
+    described_class.new(path_without_placeholder).files
     expect(Dir).to have_received(:glob).with('/foo/*.yml')
   end
 end
