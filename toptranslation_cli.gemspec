@@ -24,7 +24,8 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.3'
 
   s.add_runtime_dependency 'paint', '~> 1.0'
-  s.add_runtime_dependency 'toptranslation_api', '~> 2.0'
+  s.add_runtime_dependency 'thor', '~> 0.20'
+  s.add_runtime_dependency 'toptranslation_api', '~> 2.1'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'pry-byebug'
   s.add_development_dependency 'rake', '~> 10.0'

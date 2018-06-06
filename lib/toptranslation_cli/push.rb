@@ -41,7 +41,7 @@ module ToptranslationCli
       def create_document(path, path_with_placeholder, locale_code)
         response = project.upload_document(path, locale_code, path: path_with_placeholder, name: File.basename(path))
 
-        @project_documents[path_with_placeholder] = { identifier: response['identifier'] }
+        @project_documents[path_with_placeholder] = { identifier: response.identifier }
       end
 
       def find_document_by_path(path_with_placeholder)

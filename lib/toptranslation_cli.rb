@@ -12,6 +12,7 @@ require 'toptranslation_cli/initializer'
 require 'toptranslation_cli/placeholder_path'
 require 'toptranslation_cli/pull'
 require 'toptranslation_cli/push'
+require 'toptranslation_cli/status'
 require 'toptranslation_cli/version'
 
 module ToptranslationCli
