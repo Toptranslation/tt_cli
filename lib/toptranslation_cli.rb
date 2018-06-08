@@ -3,6 +3,7 @@
 require 'paint'
 require 'psych'
 require 'toptranslation_api'
+require 'tty-progressbar'
 
 require 'toptranslation_cli/check'
 require 'toptranslation_cli/configuration'
