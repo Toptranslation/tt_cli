@@ -11,7 +11,7 @@ module ToptranslationCli
         multibar = TTY::ProgressBar::Multi.new
 
         files = project&.documents&.flat_map do |document|
-          document.translations.take(1).map do |translation|
+          document.translations.map do |translation|
             file = {
               path: document.path.gsub('{locale_code}', translation.locale.code),
               document: document,
