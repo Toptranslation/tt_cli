@@ -14,31 +14,29 @@ module ToptranslationCli
 
         files.sort_by { |f| f[:placeholder_path] }.map do |file|
           bar = multibar.register('checking...', total: 100)
-
-          Thread.new do
-            begin
-              if local_files[file[:path]] == file[:sha1]
-                format_bar!(bar, file, :skipping)
-                bar.stop
-                Thread.current.exit
-              end
-
-              format_bar!(bar, file, :preparing)
-
-              file[:document].download(file[:locale].code, path: file[:path], file_type: 'yaml') do |n, total|
-                bar.update(total: total) if total && total != bar.total
-                format_bar!(bar, file, :downloading) if n.nil?
-                bar.advance(n) if n
-              end
-            rescue StandardError => e
-              file[:error] = e
-              format_bar!(bar, file, :error)
-            end
-          end
+          handle_file_in_thread(file, bar, local_files)
         end.map(&:join)
       end
 
       private
+
+      def handle_file_in_thread(file, bar, local_files)
+        Thread.new do
+          begin
+            if local_files[file[:path]] == file[:sha1]
+              format_bar!(bar, file, :skipping)
+              bar.stop
+              Thread.current.exit
+            end
+
+            format_bar!(bar, file, :preparing)
+            download(file, bar)
+          rescue StandardError => e
+            file[:error] = e
+            format_bar!(bar, file, :error)
+          end
+        end
+      end
 
       def format_bar!(bar, file, state)
         format = case state
@@ -73,6 +71,14 @@ module ToptranslationCli
               locale: translation.locale
             }
           end
+        end
+      end
+
+      def download(file, bar)
+        file[:document].download(file[:locale].code, path: file[:path], file_type: 'yaml') do |n, total|
+          bar.update(total: total) if total && total != bar.total
+          format_bar!(bar, file, :downloading) if n.nil?
+          bar.advance(n) if n
         end
       end
     end

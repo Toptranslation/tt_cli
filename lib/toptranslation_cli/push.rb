@@ -14,35 +14,38 @@ module ToptranslationCli
         files.map do |file|
           mutex = mutexes[file[:placeholder_path]] ||= Mutex.new
           bar = multibar.register('checking...', total: 100)
-
-          Thread.new do
-            begin
-              remote_document = find_document_by_path(remote_documents, file[:placeholder_path])
-              translation = find_translation_by_locale(remote_document&.translations || [], file[:locale])
-
-              unless translation_changed?(translation, file[:path])
-                format_bar!(bar, file, :skipping)
-                Thread.current.exit
-                next
-              end
-
-              bar.update(total: file.size)
-              format_bar!(bar, file, :uploading)
-
-              mutex.synchronize do
-                upload(file) do |upload_size|
-                  bar.advance(upload_size)
-                end
-              end
-            rescue StandardError => e
-              file[:error] = e
-              format_bar!(bar, file, :error)
-            end
-          end
+          handle_file_in_thread(file, mutex, bar, remote_documents)
         end.map(&:join)
       end
 
       private
+
+      def handle_file_in_thread(file, mutex, bar, remote_documents)
+        Thread.new do
+          begin
+            remote_document = find_document_by_path(remote_documents, file[:placeholder_path])
+            translation = find_translation_by_locale(remote_document&.translations || [], file[:locale])
+
+            unless translation_changed?(translation, file[:path])
+              format_bar!(bar, file, :skipping)
+              Thread.current.exit
+              next
+            end
+
+            bar.update(total: file.size)
+            format_bar!(bar, file, :uploading)
+
+            mutex.synchronize do
+              upload(file) do |upload_size|
+                bar.advance(upload_size)
+              end
+            end
+          rescue StandardError => e
+            file[:error] = e
+            format_bar!(bar, file, :error)
+          end
+        end
+      end
 
       def format_bar!(bar, file, state)
         format = case state
@@ -88,13 +91,12 @@ module ToptranslationCli
             FileFinder.new(path_definition).files(locale.code).flat_map do |path|
               the_placeholder_path = placeholder_path.for_path(path, locale.code)
               mutexes[the_placeholder_path] ||= Mutex.new
-              file = {
+              {
                 path: path,
                 placeholder_path: the_placeholder_path,
                 locale: locale,
                 mutex: mutexes[:placeholder_path]
               }
-              file
             end
           end
         end
