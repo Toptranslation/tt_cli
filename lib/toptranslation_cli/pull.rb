@@ -75,7 +75,7 @@ module ToptranslationCli
       end
 
       def download(file, bar)
-        file[:document].download(file[:locale].code, path: file[:path], file_type: 'yaml') do |n, total|
+        file[:document].download(file[:locale].code, path: file[:path]) do |n, total|
           bar.update(total: total) if total && total != bar.total
           format_bar!(bar, file, :downloading) if n.nil?
           bar.advance(n) if n
