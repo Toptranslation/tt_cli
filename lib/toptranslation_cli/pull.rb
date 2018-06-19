@@ -7,34 +7,46 @@ module ToptranslationCli
     class << self
       def run
         ToptranslationCli.configuration.load
-        project&.documents&.each do |document|
-          project_locales.each do |locale|
-            response = document.download(locale.code, file_format: 'yaml')
-            next unless response
-            path = path(document, locale)
 
-            if File.exist?(path) && sha1_checksum(path) == response['sha1']
-              puts "Skipping unchanged file #{path}"
-            else
-              puts "Creating file: #{path}"
-              puts "# Downloading: #{url}" if @verbose
+        multibar = TTY::ProgressBar::Multi.new
+        files = files_to_download
+        local_files = FileFinder.local_files(project)
 
-              FileUtils.mkpath(File.dirname(path))
-
-              file = File.open(path, 'w+')
-              RestClient.get response['download_url'] do |stream|
-                file.write stream
-              end
-              file.close
-            end
-          end
-        end
+        files.sort_by { |f| f[:placeholder_path] }.map do |file|
+          bar = multibar.register('checking...', total: 100)
+          handle_file_in_thread(file, bar, local_files)
+        end.map(&:join)
       end
 
       private
 
-      def sha1_checksum(path)
-        Digest::SHA1.file(path).hexdigest
+      def handle_file_in_thread(file, bar, local_files)
+        Thread.new do
+          begin
+            if local_files[file[:path]] == file[:sha1]
+              format_bar!(bar, file, :skipping)
+              bar.stop
+              Thread.current.exit
+            end
+
+            format_bar!(bar, file, :preparing)
+            download(file, bar)
+          rescue StandardError => e
+            file[:error] = e
+            format_bar!(bar, file, :error)
+          end
+        end
+      end
+
+      def format_bar!(bar, file, state)
+        format = case state
+                 when :skipping then "#{file[:path]}: Skipping unchanged file"
+                 when :preparing then "#{file[:path]}: Preparing file to download..."
+                 when :error then "#{file[:path]}: #{state} Error: #{file[:error].inspect}"
+                 when :downloading then "#{file[:path]}: [:bar] :percent"
+                 end
+        bar.instance_variable_set(:@format, format)
+        bar.render
       end
 
       def path(document, locale)
@@ -47,6 +59,27 @@ module ToptranslationCli
 
       def project
         @project ||= ToptranslationCli.connection.projects.find(ToptranslationCli.configuration.project_identifier)
+      end
+
+      def files_to_download
+        project&.documents&.flat_map do |document|
+          document.translations.map do |translation|
+            {
+              path: path(document, translation.locale),
+              document: document,
+              sha1: translation.sha1,
+              locale: translation.locale
+            }
+          end
+        end
+      end
+
+      def download(file, bar)
+        file[:document].download(file[:locale].code, path: file[:path]) do |n, total|
+          bar.update(total: total) if total && total != bar.total
+          format_bar!(bar, file, :downloading) if n.nil?
+          bar.advance(n) if n
+        end
       end
     end
   end
