@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'paint', '~> 1.0'
   s.add_runtime_dependency 'thor', '~> 0.20'
-  s.add_runtime_dependency 'toptranslation_api', '~> 2.2'
+  s.add_runtime_dependency 'toptranslation_api', '~> 2.3'
   s.add_runtime_dependency 'tty-progressbar', '~> 0.14'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'pry-byebug'
