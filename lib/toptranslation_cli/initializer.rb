@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+require 'pastel'
 require 'tty-prompt'
+require 'tty-spinner'
 
 module ToptranslationCli
   class Initializer
@@ -13,6 +15,9 @@ module ToptranslationCli
     def initialize
       @prompt = TTY::Prompt.new
       @client = Toptranslation.new({})
+      @pastel = Pastel.new
+      format = "[#{@pastel.yellow(':spinner')}] :title"
+      @spinner = TTY::Spinner.new(format, success_mark: @pastel.green('+'), error_mark: @pastel.red('+'))
     end
 
     def run
@@ -64,6 +69,7 @@ module ToptranslationCli
       end
 
       def sign_in(auth_method)
+        @spinner.update(title: 'Signing in...')
         if auth_method == :email
           ask_email_and_password
         else
@@ -76,21 +82,30 @@ module ToptranslationCli
           email = @prompt.ask('Email:', required: true)
           password = @prompt.mask('Password:', required: true, echo: false)
           begin
-            return @client.sign_in!(email: email, password: password)
+            token = @client.sign_in!(email: email, password: password)
+            @spinner.success(@pastel.green('done'))
+            return token
           rescue RestClient::Unauthorized
-            @prompt.error('Credentials are invalid')
+            @spinner.error(@pastel.red('Credentials are invalid'))
+          ensure
+            @spinner.stop
           end
         end
       end
 
       def ask_access_token
         loop do
+          token = @prompt.ask('Access token:', required: true)
+          @client.access_token = token
+          @spinner.auto_spin
           begin
-            access_token = @prompt.ask('Access token:', required: true)
-            @client.access_token = access_token
-            return access_token if @client.projects.to_a
+            projects = @client.projects.to_a
+            @spinner.success(@pastel.green('done'))
+            return token if projects
           rescue RestClient::Forbidden
-            @prompt.error('Invalid access token')
+            @spinner.error(@pastel.red('invalid access token'))
+          ensure
+            @spinner.stop
           end
         end
       end
