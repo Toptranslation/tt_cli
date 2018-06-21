@@ -32,7 +32,7 @@ class Tt < Thor
     URLS
   end
 
-  desc :init, "Create an example configuration file #{ToptranslationCli::Configuration::FILENAME}"
+  desc :init, "Create a #{ToptranslationCli::Configuration::FILENAME} configuration"
   def init
     ToptranslationCli::Initializer.run
   end
