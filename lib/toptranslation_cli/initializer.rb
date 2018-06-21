@@ -21,8 +21,7 @@ module ToptranslationCli
     end
 
     def run
-      answers = ask_config
-      create_config(answers)
+      create_config(ask_config)
       @prompt.ok("Generated #{Configuration::FILENAME}")
     end
 
@@ -42,11 +41,12 @@ module ToptranslationCli
           exit 1
         end
 
-        project_choices = @client.projects.map do |project|
-          { name: project.name, value: project.identifier }
+        @prompt.select('Project:') do |menu|
+          @client.projects.sort_by(&:name).each_with_index.map do |project, index|
+            menu.default(index + 1) if File.basename(Dir.pwd).casecmp?(project.name)
+            menu.choice name: project.name, value: project.identifier
+          end
         end
-
-        @prompt.select('Project:', project_choices)
       end
 
       def ask_auth_method
