@@ -17,7 +17,7 @@ module ToptranslationCli
       @client = Toptranslation.new({})
       @pastel = Pastel.new
       format = "[#{@pastel.yellow(':spinner')}] :title"
-      @spinner = TTY::Spinner.new(format, success_mark: @pastel.green('+'), error_mark: @pastel.red('+'))
+      @spinner = TTY::Spinner.new(format, success_mark: @pastel.green('+'), error_mark: @pastel.red('-'))
     end
 
     def run
@@ -35,14 +35,23 @@ module ToptranslationCli
         }
       end
 
-      def ask_project
-        if @client.projects.none?
-          @prompt.error('Could not find any projects')
-          exit 1
+      def projects?
+        @spinner.update(title: 'Fetching projects...')
+        @spinner.auto_spin
+        @client.projects.any?.tap do |any|
+          if any
+            @spinner.success(@pastel.green('done'))
+          else
+            @spinner.error(@pastel.red('could not find any projects'))
+          end
         end
+      end
+
+      def ask_project
+        exit 1 unless projects?
 
         @prompt.select('Project:') do |menu|
-          @client.projects.sort_by(&:name).each_with_index.map do |project, index|
+          @client.projects.sort_by(&:name).reverse.each_with_index.map do |project, index|
             menu.default(index + 1) if File.basename(Dir.pwd).casecmp?(project.name)
             menu.choice name: project.name, value: project.identifier
           end
@@ -78,36 +87,27 @@ module ToptranslationCli
       end
 
       def ask_email_and_password
-        loop do
-          email = @prompt.ask('Email:', required: true)
-          password = @prompt.mask('Password:', required: true, echo: false)
-          begin
-            token = @client.sign_in!(email: email, password: password)
-            @spinner.success(@pastel.green('done'))
-            return token
-          rescue RestClient::Unauthorized
-            @spinner.error(@pastel.red('Credentials are invalid'))
-          ensure
-            @spinner.stop
-          end
-        end
+        email = @prompt.ask('Email:', required: true)
+        password = @prompt.mask('Password:', required: true, echo: false)
+        token = @client.sign_in!(email: email, password: password)
+        @spinner.success(@pastel.green('done'))
+        token
+      rescue RestClient::Unauthorized
+        @spinner.error(@pastel.red('credentials are invalid'))
+        retry
       end
 
       def ask_access_token
-        loop do
-          token = @prompt.ask('Access token:', required: true)
-          @client.access_token = token
-          @spinner.auto_spin
-          begin
-            projects = @client.projects.to_a
-            @spinner.success(@pastel.green('done'))
-            return token if projects
-          rescue RestClient::Forbidden
-            @spinner.error(@pastel.red('invalid access token'))
-          ensure
-            @spinner.stop
-          end
-        end
+        token = @prompt.ask('Access token:', required: true)
+        @client.access_token = token
+        @spinner.auto_spin
+        @client.projects.to_a
+        @spinner.success(@pastel.green('done'))
+        token
+      rescue RestClient::Forbidden
+        @spinner.error(@pastel.red('invalid access token'))
+        @spinner.stop
+        retry
       end
 
       def create_config(answers)
