@@ -46,7 +46,7 @@ module ToptranslationCli
         translation = find_translation_by_locale(remote_document&.translations || [], file[:locale])
 
         unless translation_changed?(translation, file[:path])
-          spinner.instance_variable_set(:@success_mark, @pastel.blue('-'))
+          spinner.instance_variable_set(:@success_mark, @pastel.blue('='))
           return spinner.success(@pastel.blue('skipping unchanged file'))
         end
 

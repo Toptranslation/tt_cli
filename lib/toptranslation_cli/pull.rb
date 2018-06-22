@@ -1,52 +1,64 @@
 # frozen_string_literal: true
 
 require 'fileutils'
+require 'tty-spinner'
+require 'pastel'
 
 module ToptranslationCli
   class Pull
-    class << self
-      def run
-        ToptranslationCli.configuration.load
+    def self.run
+      new.run
+    end
 
-        multibar = TTY::ProgressBar::Multi.new
-        files = files_to_download
-        local_files = FileFinder.local_files(project)
+    def initialize
+      ToptranslationCli.configuration.load
 
-        files.sort_by { |f| f[:placeholder_path] }.map do |file|
-          bar = multibar.register('checking...', total: 100)
-          handle_file_in_thread(file, bar, local_files)
-        end.map(&:join)
-      end
+      @pastel = Pastel.new
+      @spinner_settings = { success_mark: @pastel.green('+'), error_mark: @pastel.red('-') }
+      @spinner = TTY::Spinner.new("[#{@pastel.yellow(':spinner')}] :title", @spinner_settings)
+      @download_spinners = TTY::Spinner::Multi.new(
+        "[#{@pastel.yellow(':spinner')}] Downloading translations...",
+        @spinner_settings
+      )
+    end
 
-      private
+    def run
+      @files = files_to_download
+      @local_files = find_local_files
+      download_files
+    rescue RestClient::Forbidden
+      @spinner.error('invalid access token')
+      exit 1
+    end
 
-      def handle_file_in_thread(file, bar, local_files)
-        Thread.new do
-          begin
-            if local_files[file[:path]] == file[:sha1]
-              format_bar!(bar, file, :skipping)
-              bar.stop
-              Thread.current.exit
-            end
+    private
 
-            format_bar!(bar, file, :preparing)
-            download(file, bar)
-          rescue StandardError => e
-            file[:error] = e
-            format_bar!(bar, file, :error)
-          end
+      def download_files
+        @files.each do |file|
+          download_proc = method(:download_file).curry[file]
+          @download_spinners.register("[#{@pastel.yellow(':spinner')}] #{file[:path]}", &download_proc)
         end
+        @download_spinners.auto_spin
       end
 
-      def format_bar!(bar, file, state)
-        format = case state
-                 when :skipping then "#{file[:path]}: Skipping unchanged file"
-                 when :preparing then "#{file[:path]}: Preparing file to download..."
-                 when :error then "#{file[:path]}: #{state} Error: #{file[:error].inspect}"
-                 when :downloading then "#{file[:path]}: [:bar] :percent"
-                 end
-        bar.instance_variable_set(:@format, format)
-        bar.render
+      def download_file(file, spinner)
+        if @local_files[file[:path]] == file[:sha1]
+          spinner.instance_variable_set(:@success_mark, @pastel.blue('='))
+          return spinner.success(@pastel.blue('skipping unchanged file'))
+        end
+
+        file[:document].download(file[:locale].code, path: file[:path])
+        spinner.success(@pastel.green('done'))
+      rescue StandardError => e
+        spinner.error(@pastel.red("error: #{e.message}"))
+      end
+
+      def find_local_files
+        @spinner.update(title: 'Finding local files...')
+        @spinner.auto_spin
+        files = FileFinder.local_files(project)
+        @spinner.success(@pastel.green("found #{files.count} file(s)"))
+        files
       end
 
       def path(document, locale)
@@ -62,7 +74,9 @@ module ToptranslationCli
       end
 
       def files_to_download
-        project&.documents&.flat_map do |document|
+        @spinner.update(title: 'Checking remote files...')
+        @spinner.auto_spin
+        files = project&.documents&.flat_map do |document|
           document.translations.map do |translation|
             {
               path: path(document, translation.locale),
@@ -72,15 +86,8 @@ module ToptranslationCli
             }
           end
         end
+        @spinner.success(@pastel.green('done'))
+        files
       end
-
-      def download(file, bar)
-        file[:document].download(file[:locale].code, path: file[:path]) do |n, total|
-          bar.update(total: total) if total && total != bar.total
-          format_bar!(bar, file, :downloading) if n.nil?
-          bar.advance(n) if n
-        end
-      end
-    end
   end
 end
