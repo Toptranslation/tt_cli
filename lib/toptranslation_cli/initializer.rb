@@ -51,7 +51,7 @@ module ToptranslationCli
         exit 1 unless projects?
 
         @prompt.select('Project:') do |menu|
-          @client.projects.sort_by(&:name).reverse.each_with_index.map do |project, index|
+          @client.projects.sort_by(&:name).each_with_index.map do |project, index|
             menu.default(index + 1) if File.basename(Dir.pwd).casecmp?(project.name)
             menu.choice name: project.name, value: project.identifier
           end
