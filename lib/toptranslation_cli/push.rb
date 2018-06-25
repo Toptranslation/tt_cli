@@ -62,7 +62,7 @@ module ToptranslationCli
       def fetch_documents
         @spinner.update(title: 'Fetching remote documents...')
         @spinner.auto_spin
-        documents = project&.documents
+        documents = project&.documents.to_a
         @spinner.success(@pastel.green("found #{documents.count} document(s)"))
         documents
       end
