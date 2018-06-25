@@ -45,7 +45,7 @@ module ToptranslationCli
         remote_document = find_document_by_path(@documents, file[:placeholder_path])
         translation = find_translation_by_locale(remote_document&.translations || [], file[:locale])
 
-        unless translation_changed?(translation, file[:path])
+        unless translation_changed?(translation, file)
           spinner.instance_variable_set(:@success_mark, @pastel.blue('='))
           return spinner.success(@pastel.blue('skipping unchanged file'))
         end
@@ -81,7 +81,8 @@ module ToptranslationCli
                 path: path,
                 placeholder_path: the_placeholder_path,
                 locale: locale,
-                mutex: mutex
+                mutex: mutex,
+                sha1: sha1_checksum(path)
               }
             end
           end
@@ -99,8 +100,8 @@ module ToptranslationCli
         )
       end
 
-      def translation_changed?(translation, path)
-        translation.nil? || translation.sha1 != sha1_checksum(path)
+      def translation_changed?(translation, file)
+        translation.nil? || translation.sha1 != file[:sha1]
       end
 
       def sha1_checksum(path)
