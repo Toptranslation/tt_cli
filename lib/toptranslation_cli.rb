@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'paint'
 require 'psych'
 require 'toptranslation_api'
 
