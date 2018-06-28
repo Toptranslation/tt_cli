@@ -1,20 +1,34 @@
 # toptranslation_cli
 Gem to provide a command line tool for synching documents with the Toptranslation translations service.
 
+## Installation
+
+Install `toptranslation_cli` via `gem install`
+
+```
+$ gem install toptranslation_cli
+```
+
+or add it as a dependency to your project's Gemfile
+
+```ruby
+gem 'toptranslation_cli', group: :development
+```
+
 ## Configuration
 
-Configuration is stored in `.toptranslation.yml`. An example configuration can be created with `$ tt init`. The configuration can be checked with `$ tt check` (see Usage: Check configuration).
+Configuration is stored in `.toptranslation.yml`. A configuration can be created with [`$ tt init`](#initialization). The configuration can be checked with [`$ tt check`](#check-configuration).
 
 ### Example configuration
 
 An example configuration file `.toptranslation.yml:
 
 ```yaml
----
 project_identifier: "<PROJECT_IDENTIFIER>"
 access_token: "<YOUR_ACCESS_TOKEN>"
 files:
-  - config/locales/{locale_code}/**/*.yml
+  - config/locales/{locale_code}/**/*.yml # matches config/locales/en/foo.yml
+  - config/locales/**/*.{locale_code}.yml # matches config/locales/foo.en.yml
 ```
 
 #### Used attributes:
@@ -28,16 +42,15 @@ files:
 
 ## Usage
 
-### Initialisation
+### Initialization
 
-Creates an `.toptranslation.yml configuration in the current directory with example values.
+Starts an interactive configuration dialog that will generate a `.toptranslation.yml` configuration.
 
-```bash
-$ tt init
-Creating example configuration in '.toptranslation.yml'.
-
-See https://developer.toptranslation.com for configuration instructions.
 ```
+tt init
+```
+
+[![asciicast](https://asciinema.org/a/3wFSWXz5Z7YCDQB1necBXsSoc.png)](https://asciinema.org/a/3wFSWXz5Z7YCDQB1necBXsSoc)
 
 ### Check configuration
 
@@ -58,7 +71,7 @@ Matching files:
 
 ### Status
 
-Show which files differ or exist only locally/remotely.
+Shows which files differ or exist only locally/remotely.
 
 ```bash
 $ tt status
@@ -77,11 +90,13 @@ Remote: These documents exist only remotely
 
 ### Push local documents
 
-Pushes locals documents to Toptranslation.
+Pushes locals translations to Toptranslation.
 
 ```bash
 $ tt push
 ```
+
+[![asciicast](https://asciinema.org/a/RYGlC3Mx9rm0RvHDzdpQhstlG.png)](https://asciinema.org/a/RYGlC3Mx9rm0RvHDzdpQhstlG)
 
 ### Pull remote translations
 
@@ -91,15 +106,32 @@ Pulls translations from Toptranslation and overwrites local translations.
 $ tt pull
 ```
 
+[![asciicast](https://asciinema.org/a/6IiTInxz1mKTktq3x54AvSYSs.png)](https://asciinema.org/a/6IiTInxz1mKTktq3x54AvSYSs)
+
 ### Help
 
-Displays help page with usage instructions, examples and contact options.
+Display help page with usage instructions, examples and contact options.
 
 ```
 $ tt help
 Toptranslation command line client, version 0.2.0
 
-tt commands: ...
+tt commands:
+  tt check    # Check current configuration
+  tt help     # Print usage information
+  tt init     # Create a .toptranslation.yml configuration
+  tt pull     # Download remote translations, overwriting local documents
+  tt push     # Upload local documents
+  tt status   # Show local documents that differ from remote documents
+  tt version  # Print version
+
+twitter:
+  @tt_developers (https://twitter.com/tt_developers)
+
+websites:
+  https://www.toptranslation.com
+  https://developer.toptranslation.com
+  https://github.com/Toptranslation/tt_cli
 ```
 
 ### Version
@@ -108,7 +140,7 @@ Displays the current version of this software.
 
 ```
 $ tt version
-Toptranslation command line client, version 1.0.0
+Toptranslation command line client, version 0.2.0
 ```
 
 ## Contact
