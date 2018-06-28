@@ -10,7 +10,7 @@ module ToptranslationCli
       configuration = begin
                         Psych.safe_load(File.read(FILENAME, encoding: 'bom|utf-8'))
                       rescue StandardError => error
-                        puts Paint['Could not read configuration', :red], error
+                        puts Pastel.new.red('Could not read configuration'), error
                         exit 1
                       end
       @project_identifier = configuration['project_identifier']

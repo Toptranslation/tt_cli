@@ -20,29 +20,31 @@ module ToptranslationCli
         check_matching_files
       end
 
+      private
+
       def check_configuration_file
         if ToptranslationCli.configuration.exist?
-          Paint['ok', :green]
+          pastel.green('ok')
         else
-          Paint['configuration file missing', :red]
+          pastel.red('configuration file missing')
         end
       end
 
       def check_access_token
         ToptranslationCli.configuration.load
         if !ToptranslationCli.configuration.access_token.nil?
-          Paint['ok', :green]
+          pastel.green('ok')
         else
-          Paint['access token missing from configuration file', :red]
+          pastel.red('access token missing from configuration file')
         end
       end
 
       def check_project_identifier
         ToptranslationCli.configuration.load
         if !ToptranslationCli.configuration.project_identifier.nil?
-          Paint['ok', :green]
+          pastel.green('ok')
         else
-          Paint['project_identifier missing from configuration file', :red]
+          pastel.red('project_identifier missing from configuration file')
         end
       end
 
@@ -51,22 +53,22 @@ module ToptranslationCli
         remote_project = begin
                            ToptranslationCli.connection.projects.find(project_identifier)
                          rescue StandardError => e
-                           puts Paint[e, :red]
+                           puts pastel.red(e)
                          end
 
         if remote_project&.identifier == project_identifier
-          Paint['ok', :green]
+          pastel.green('ok')
         else
-          Paint['project not found', :red]
+          pastel.red('project not found')
         end
       end
 
       def check_file_paths_present
         ToptranslationCli.configuration.load
         if ToptranslationCli.configuration.files.any?
-          Paint['ok', :green]
+          pastel.green('ok')
         else
-          Paint['file paths missing from configuration file', :red]
+          pastel.red('file paths missing from configuration file')
         end
       end
 
@@ -79,16 +81,18 @@ module ToptranslationCli
         end
       end
 
-      private
-
       def matching_files_output(path_definition)
         count = FileFinder.new(path_definition).files.count
 
         if count != 0
-          Paint["#{count} matching files", :green]
+          pastel.green("#{count} matching files")
         else
-          Paint['no matching files', :red]
+          pastel.red('no matching files')
         end
+      end
+
+      def pastel
+        @pastel ||= Pastel.new
       end
     end
   end

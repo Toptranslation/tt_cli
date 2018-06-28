@@ -23,11 +23,9 @@ Gem::Specification.new do |s| # rubocop:disable Metrics/BlockLength
   s.metadata              = { 'source_code_uri' => 'https://github.com/Toptranslation/tt_cli' }
   s.required_ruby_version = '>= 2.3'
 
-  s.add_runtime_dependency 'paint', '~> 1.0'
   s.add_runtime_dependency 'pastel', '~> 0.7'
   s.add_runtime_dependency 'thor', '~> 0.20'
   s.add_runtime_dependency 'toptranslation_api', '~> 2.4'
-  s.add_runtime_dependency 'tty-progressbar', '~> 0.14'
   s.add_runtime_dependency 'tty-prompt', '~> 0.16'
   s.add_runtime_dependency 'tty-spinner', '~> 0.8'
   s.add_development_dependency 'pry'
