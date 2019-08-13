@@ -4,7 +4,7 @@ require 'tty-spinner'
 require 'pastel'
 
 module ToptranslationCli
-  class Push
+  class Push # rubocop:disable Metrics/ClassLength
     class << self
       def run
         new.run
@@ -41,14 +41,14 @@ module ToptranslationCli
         @upload_spinners.auto_spin
       end
 
-      def upload_file(file, spinner)
+      def translation_for_file(file)
         remote_document = find_document_by_path(@documents, file[:placeholder_path])
-        translation = find_translation_by_locale(remote_document&.translations || [], file[:locale])
+        find_translation_by_locale(remote_document&.translations || [], file[:locale])
+      end
 
-        unless translation_changed?(translation, file)
-          spinner.instance_variable_set(:@success_mark, @pastel.blue('='))
-          return spinner.success(@pastel.blue('skipping unchanged file'))
-        end
+      def upload_file(file, spinner)
+        translation = translation_for_file(file)
+        return mark_unchanged(spinner) unless translation_changed?(translation, file)
 
         file[:mutex].synchronize do
           do_upload(file)
@@ -57,6 +57,11 @@ module ToptranslationCli
         spinner.success(@pastel.green('done'))
       rescue StandardError => e
         spinner.error(@pastel.red("error: #{e.message}"))
+      end
+
+      def mark_unchanged(spinner)
+        spinner.instance_variable_set(:@success_mark, @pastel.blue('='))
+        spinner.success(@pastel.blue('skipping unchanged file'))
       end
 
       def fetch_documents
@@ -73,22 +78,22 @@ module ToptranslationCli
         mutexes = {}
         files = ToptranslationCli.configuration.files.flat_map do |path_definition|
           placeholder_path = PlaceholderPath.new(path_definition)
-          project_locales.flat_map do |locale|
-            FileFinder.new(path_definition).files(locale.code).flat_map do |path|
-              the_placeholder_path = placeholder_path.for_path(path, locale.code)
-              mutex = mutexes[the_placeholder_path] ||= Mutex.new
-              {
-                path: path,
-                placeholder_path: the_placeholder_path,
-                locale: locale,
-                mutex: mutex,
-                sha1: sha1_checksum(path)
-              }
-            end
-          end
+          project_locales.flat_map { |locale| file_to_upload(placeholder_path, locale, mutexes) }
         end
         @spinner.success(@pastel.green("found #{files.count} file(s)"))
         files
+      end
+
+      def file_to_upload(path_definition, locale)
+        FileFinder.new(path_definition).files(locale.code).flat_map do |path|
+          the_placeholder_path = placeholder_path.for_path(path, locale.code)
+          mutex = mutexes[the_placeholder_path] ||= Mutex.new
+          {
+            path: path,
+            placeholder_path: the_placeholder_path,
+            locale: locale, mutex: mutex, sha1: sha1_checksum(path)
+          }
+        end
       end
 
       def do_upload(file)

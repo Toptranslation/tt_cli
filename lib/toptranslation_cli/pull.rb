@@ -42,15 +42,17 @@ module ToptranslationCli
       end
 
       def download_file(file, spinner)
-        if @local_files[file[:path]] == file[:sha1]
-          spinner.instance_variable_set(:@success_mark, @pastel.blue('='))
-          return spinner.success(@pastel.blue('skipping unchanged file'))
-        end
+        return mark_unchanged(spinner) if @local_files[file[:path]] == file[:sha1]
 
         file[:document].download(file[:locale].code, path: file[:path])
         spinner.success(@pastel.green('done'))
       rescue StandardError => e
         spinner.error(@pastel.red("error: #{e.message}"))
+      end
+
+      def mark_unchanged(spinner)
+        spinner.instance_variable_set(:@success_mark, @pastel.blue('='))
+        spinner.success(@pastel.blue('skipping unchanged file'))
       end
 
       def find_local_files
@@ -78,16 +80,20 @@ module ToptranslationCli
         @spinner.auto_spin
         files = project&.documents&.flat_map do |document|
           document.translations.map do |translation|
-            {
-              path: path(document, translation.locale),
-              document: document,
-              sha1: translation.sha1,
-              locale: translation.locale
-            }
+            file_to_download(document, translation)
           end
         end
         @spinner.success(@pastel.green('done'))
         files
+      end
+
+      def file_to_download
+        {
+          path: path(document, translation.locale),
+          document: document,
+          sha1: translation.sha1,
+          locale: translation.locale
+        }
       end
   end
 end

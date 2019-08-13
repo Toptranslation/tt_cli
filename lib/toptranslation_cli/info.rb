@@ -5,19 +5,20 @@ module ToptranslationCli
     def self.print_help
       print_version
 
-      puts "\n"
-      puts "Usage:\t\ttt [command]\n\n"
-      puts 'Commands:'
-      puts "   init\t\tCreates example configuration file #{Configuration::FILENAME}"
-      puts "   check\tChecks current configuration"
-      puts "   push\t\tUploads local documents"
-      puts "   pull\t\tPulls remote translations, overwrites local documents"
-      puts "   --version\tDisplays current version of application"
-      puts "   --help\tDisplays this help screen\n\n"
-      puts "Twitter:\t@tt_developers\n\n"
-      puts "Websites:\thttps://www.toptranslation.com"
-      puts "\t\thttps://developer.toptranslation.com"
-      puts "\t\thttps://github.com/Toptranslation/tt_cli"
+      puts <<~INFO
+        Usage:\t\ttt [command]\n\n"
+        Commands:'
+           init\t\tCreates example configuration file #{Configuration::FILENAME}"
+           check\tChecks current configuration"
+           push\t\tUploads local documents"
+           pull\t\tPulls remote translations, overwrites local documents"
+           --version\tDisplays current version of application"
+           --help\tDisplays this help screen\n\n"
+        Twitter:\t@tt_developers\n\n"
+        Websites:\thttps://www.toptranslation.com"
+        \t\thttps://developer.toptranslation.com"
+        \t\thttps://github.com/Toptranslation/tt_cli"
+      INFO
     end
 
     def self.print_version

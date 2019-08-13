@@ -7,12 +7,6 @@ module ToptranslationCli
     FILENAME = '.toptranslation.yml'
 
     def load
-      configuration = begin
-                        Psych.safe_load(File.read(FILENAME, encoding: 'bom|utf-8'))
-                      rescue StandardError => error
-                        puts Pastel.new.red('Could not read configuration'), error
-                        exit 1
-                      end
       @project_identifier = configuration['project_identifier']
       @access_token = configuration['access_token']
       @files = configuration['files'] || []
@@ -31,7 +25,7 @@ module ToptranslationCli
     def use_examples
       @project_identifier = '<PROJECT_IDENTIFIER>'
       @access_token = '<YOUR_ACCESS_TOKEN>'
-      @files = %w[config/locales/{locale_code}/**/*.yml]
+      @files = ['config/locales/{locale_code}/**/*.yml']
     end
 
     def exist?
@@ -39,6 +33,13 @@ module ToptranslationCli
     end
 
     private
+
+      def configuration
+        @configuration ||= Psych.safe_load(File.read(FILENAME, encoding: 'bom|utf-8'))
+      rescue StandardError => e
+        puts Pastel.new.red('Could not read configuration'), e
+        exit 1
+      end
 
       def configuration_hash
         {
