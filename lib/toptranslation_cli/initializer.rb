@@ -5,7 +5,7 @@ require 'tty-prompt'
 require 'tty-spinner'
 
 module ToptranslationCli
-  class Initializer
+  class Initializer # rubocop:disable Metrics/ClassLength
     class << self
       def run
         new.run
@@ -51,7 +51,7 @@ module ToptranslationCli
         exit 1 unless projects?
 
         @prompt.select('Project:') do |menu|
-          @client.projects.sort_by(&:name).each_with_index.map do |project, index|
+          each_project_with_index.map do |project, index|
             menu.default(index + 1) if File.basename(Dir.pwd).casecmp?(project.name)
             menu.choice name: project.name, value: project.identifier
           end
@@ -116,6 +116,10 @@ module ToptranslationCli
         config.access_token = answers[:token]
         config.files = answers[:file_selectors]
         config.save
+      end
+
+      def each_project_with_index
+        @client.projects.sort_by(&:name).each_with_index
       end
   end
 end

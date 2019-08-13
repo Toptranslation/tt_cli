@@ -6,7 +6,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 # Maintain your gem's version:
 require 'toptranslation_cli/version'
 
-Gem::Specification.new do |s| # rubocop:disable Metrics/BlockLength
+Gem::Specification.new do |s|
   s.name                  = 'toptranslation_cli'
   s.version               = ToptranslationCli::VERSION
   s.summary               = 'Toptranslation command line client'
@@ -29,9 +29,8 @@ Gem::Specification.new do |s| # rubocop:disable Metrics/BlockLength
   s.add_runtime_dependency 'tty-prompt', '~> 0.16'
   s.add_runtime_dependency 'tty-spinner', '~> 0.8'
   s.add_development_dependency 'pry'
-  s.add_development_dependency 'pry-byebug'
   s.add_development_dependency 'rake', '~> 10.0'
   s.add_development_dependency 'rspec', '~> 3.4'
-  s.add_development_dependency 'rubocop', '~> 0.56.0'
-  s.add_development_dependency 'rubocop-rspec', '~> 1.25.1'
+  s.add_development_dependency 'rubocop', '~> 0.74.0'
+  s.add_development_dependency 'rubocop-rspec', '~> 1.35.0'
 end

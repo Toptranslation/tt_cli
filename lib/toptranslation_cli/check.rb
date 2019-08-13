@@ -3,7 +3,7 @@
 module ToptranslationCli
   class Check
     class << self
-      def run
+      def run # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         puts "Toptranslation command line client, version #{VERSION} - Configuration check\n\n"
         puts "Configuration file present:\t#{check_configuration_file}"
         puts " * includes access_token:\t#{check_access_token}"
@@ -22,78 +22,80 @@ module ToptranslationCli
 
       private
 
-      def check_configuration_file
-        if ToptranslationCli.configuration.exist?
-          pastel.green('ok')
-        else
-          pastel.red('configuration file missing')
+        def check_configuration_file
+          if ToptranslationCli.configuration.exist?
+            pastel.green('ok')
+          else
+            pastel.red('configuration file missing')
+          end
         end
-      end
 
-      def check_access_token
-        ToptranslationCli.configuration.load
-        if !ToptranslationCli.configuration.access_token.nil?
-          pastel.green('ok')
-        else
-          pastel.red('access token missing from configuration file')
+        def check_access_token
+          ToptranslationCli.configuration.load
+          if !ToptranslationCli.configuration.access_token.nil?
+            pastel.green('ok')
+          else
+            pastel.red('access token missing from configuration file')
+          end
         end
-      end
 
-      def check_project_identifier
-        ToptranslationCli.configuration.load
-        if !ToptranslationCli.configuration.project_identifier.nil?
-          pastel.green('ok')
-        else
-          pastel.red('project_identifier missing from configuration file')
+        def check_project_identifier
+          ToptranslationCli.configuration.load
+          if !ToptranslationCli.configuration.project_identifier.nil?
+            pastel.green('ok')
+          else
+            pastel.red('project_identifier missing from configuration file')
+          end
         end
-      end
 
-      def check_for_project
-        project_identifier = ToptranslationCli.configuration.project_identifier
-        remote_project = begin
-                           ToptranslationCli.connection.projects.find(project_identifier)
-                         rescue StandardError => e
-                           puts pastel.red(e)
-                         end
-
-        if remote_project&.identifier == project_identifier
-          pastel.green('ok')
-        else
-          pastel.red('project not found')
+        def find_remote_project(project_identifier)
+          ToptranslationCli.connection.projects.find(project_identifier)
+        rescue StandardError => e
+          puts pastel.red(e)
         end
-      end
 
-      def check_file_paths_present
-        ToptranslationCli.configuration.load
-        if ToptranslationCli.configuration.files.any?
-          pastel.green('ok')
-        else
-          pastel.red('file paths missing from configuration file')
+        def check_for_project
+          project_identifier = ToptranslationCli.configuration.project_identifier
+          remote_project = find_remote_project(project_identifier)
+
+          if remote_project&.identifier == project_identifier
+            pastel.green('ok')
+          else
+            pastel.red('project not found')
+          end
         end
-      end
 
-      def check_matching_files
-        puts 'Matching files:'
-
-        ToptranslationCli.configuration.load
-        ToptranslationCli.configuration.files.each do |path_definition|
-          puts " * #{path_definition}: #{matching_files_output(path_definition)}"
+        def check_file_paths_present
+          ToptranslationCli.configuration.load
+          if ToptranslationCli.configuration.files.any?
+            pastel.green('ok')
+          else
+            pastel.red('file paths missing from configuration file')
+          end
         end
-      end
 
-      def matching_files_output(path_definition)
-        count = FileFinder.new(path_definition).files.count
+        def check_matching_files
+          puts 'Matching files:'
 
-        if count != 0
-          pastel.green("#{count} matching files")
-        else
-          pastel.red('no matching files')
+          ToptranslationCli.configuration.load
+          ToptranslationCli.configuration.files.each do |path_definition|
+            puts " * #{path_definition}: #{matching_files_output(path_definition)}"
+          end
         end
-      end
 
-      def pastel
-        @pastel ||= Pastel.new
-      end
+        def matching_files_output(path_definition)
+          count = FileFinder.new(path_definition).files.count
+
+          if count != 0
+            pastel.green("#{count} matching files")
+          else
+            pastel.red('no matching files')
+          end
+        end
+
+        def pastel
+          @pastel ||= Pastel.new
+        end
     end
   end
 end

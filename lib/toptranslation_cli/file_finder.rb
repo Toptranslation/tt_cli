@@ -25,28 +25,33 @@ module ToptranslationCli
           project_locales&.each do |locale|
             translation = document.translations.find { |t| t.locale.code == locale.code }
             next unless translation
+
             path = document.path.gsub('{locale_code}', locale.code)
-            files[path] = {
-              sha1: translation.sha1,
-              identifier: document.identifier,
-              locale_code:  locale.code
-            }
+            files[path] = remote_file(document, locale, translation)
           end
         end
       end
 
       private
 
-      def local_files_for_path_definition(path_definition, locale_code)
-        new(path_definition)
-          .files(locale_code)
-          .map { |path| { path => checksum(path) } }
-          .reduce({}, &:merge)
-      end
+        def add_remote_file(document, locale, translation)
+          {
+            sha1: translation.sha1,
+            identifier: document.identifier,
+            locale_code: locale.code
+          }
+        end
 
-      def checksum(path)
-        Digest::SHA1.file(path).hexdigest
-      end
+        def local_files_for_path_definition(path_definition, locale_code)
+          new(path_definition)
+            .files(locale_code)
+            .map { |path| { path => checksum(path) } }
+            .reduce({}, &:merge)
+        end
+
+        def checksum(path)
+          Digest::SHA1.file(path).hexdigest
+        end
     end
   end
 end
