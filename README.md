@@ -96,7 +96,7 @@ Pushes locals translations to Toptranslation.
 $ tt push
 ```
 
-[![asciicast](https://asciinema.org/a/RYGlC3Mx9rm0RvHDzdpQhstlG.png)](https://asciinema.org/a/RYGlC3Mx9rm0RvHDzdpQhstlG)
+[![asciicast](https://asciinema.org/a/3HT7WtvkQG3Zs3XO3orBeOdb3.svg)](https://asciinema.org/a/3HT7WtvkQG3Zs3XO3orBeOdb3)
 
 ### Pull remote translations
 
@@ -106,7 +106,7 @@ Pulls translations from Toptranslation and overwrites local translations.
 $ tt pull
 ```
 
-[![asciicast](https://asciinema.org/a/6IiTInxz1mKTktq3x54AvSYSs.png)](https://asciinema.org/a/6IiTInxz1mKTktq3x54AvSYSs)
+[![asciicast](https://asciinema.org/a/MrW1FGaAgljvWO3r9V6mCa3Pi.svg)](https://asciinema.org/a/MrW1FGaAgljvWO3r9V6mCa3Pi)
 
 ### Help
 
