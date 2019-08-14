@@ -3,6 +3,8 @@
 require 'psych'
 require 'toptranslation_api'
 
+require 'toptranslation_cli/threaded'
+
 require 'toptranslation_cli/check'
 require 'toptranslation_cli/configuration'
 require 'toptranslation_cli/file_finder'

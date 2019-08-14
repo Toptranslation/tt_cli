@@ -3,9 +3,12 @@
 require 'fileutils'
 require 'tty-spinner'
 require 'pastel'
+require 'tty-progressbar'
 
 module ToptranslationCli
   class Pull
+    using Threaded
+
     def self.run
       new.run
     end
@@ -16,47 +19,46 @@ module ToptranslationCli
       @pastel = Pastel.new
       @spinner_settings = { success_mark: @pastel.green('+'), error_mark: @pastel.red('-') }
       @spinner = TTY::Spinner.new("[#{@pastel.yellow(':spinner')}] :title", @spinner_settings)
-      @download_spinners = TTY::Spinner::Multi.new(
-        "[#{@pastel.yellow(':spinner')}] Downloading translations...",
-        @spinner_settings
-      )
     end
 
     def run
-      @files = files_to_download
-      @local_files = find_local_files
-      download_files
-    rescue RestClient::Forbidden
-      @spinner.error('invalid access token')
+      changed = changed_files(remote_files, local_files)
+      download_files(changed)
+    rescue RestClient::BadRequest
+      @spinner.error(@pastel.red('invalid access token')) if @spinner.spinning?
+      exit 1
+    rescue RestClient::NotFound
+      @spinner.error(@pastel.red('project not found')) if @spinner.spinning?
       exit 1
     end
 
     private
 
-      def download_files
-        @files.each do |file|
-          download_proc = method(:download_file).curry[file]
-          @download_spinners.register("[#{@pastel.yellow(':spinner')}] #{file[:path]}", &download_proc)
+      def changed_files(remote_files, local_files)
+        @spinner.update(title: 'Checking for changed files...')
+        files = remote_files.reject do |file|
+          local_files[file[:path]] == file[:sha1]
         end
-        @download_spinners.auto_spin
+        @spinner.auto_spin
+        @spinner.success(@pastel.green("found #{files.count} changed file(s)"))
+        files
       end
 
-      def download_file(file, spinner)
-        return mark_unchanged(spinner) if @local_files[file[:path]] == file[:sha1]
+      def download_files(files)
+        return if files.empty?
 
-        file[:document].download(file[:locale].code, path: file[:path])
-        spinner.success(@pastel.green('done'))
-      rescue StandardError => e
-        spinner.error(@pastel.red("error: #{e.message}"))
+        bar = TTY::ProgressBar.new('Downloading [:bar] :percent [:current/:total]', total: files.count)
+        bar.render
+
+        files.each_in_threads(8) do |file|
+          file[:document].download(file[:locale].code, path: file[:path])
+          bar.synchronize { bar.log(file[:path]) }
+          bar.advance
+        end
       end
 
-      def mark_unchanged(spinner)
-        spinner.instance_variable_set(:@success_mark, @pastel.blue('='))
-        spinner.success(@pastel.blue('skipping unchanged file'))
-      end
-
-      def find_local_files
-        @spinner.update(title: 'Finding local files...')
+      def local_files
+        @spinner.update(title: 'Checking local files...')
         @spinner.auto_spin
         files = FileFinder.local_files(project)
         @spinner.success(@pastel.green("found #{files.count} file(s)"))
@@ -75,7 +77,7 @@ module ToptranslationCli
         @project ||= ToptranslationCli.connection.projects.find(ToptranslationCli.configuration.project_identifier)
       end
 
-      def files_to_download
+      def remote_files
         @spinner.update(title: 'Checking remote files...')
         @spinner.auto_spin
         files = project&.documents&.flat_map do |document|
@@ -83,11 +85,11 @@ module ToptranslationCli
             file_to_download(document, translation)
           end
         end
-        @spinner.success(@pastel.green('done'))
+        @spinner.success(@pastel.green("found #{files.count} file(s)"))
         files
       end
 
-      def file_to_download
+      def file_to_download(document, translation)
         {
           path: path(document, translation.locale),
           document: document,
