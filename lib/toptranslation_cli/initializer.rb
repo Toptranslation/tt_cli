@@ -14,7 +14,7 @@ module ToptranslationCli
 
     def initialize
       @prompt = TTY::Prompt.new
-      @client = Toptranslation.new({})
+      @client = ToptranslationCli.connection
       @pastel = Pastel.new
       format = "[#{@pastel.yellow(':spinner')}] :title"
       @spinner = TTY::Spinner.new(format, success_mark: @pastel.green('+'), error_mark: @pastel.red('-'))
