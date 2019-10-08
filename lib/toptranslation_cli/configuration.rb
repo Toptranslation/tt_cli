@@ -6,13 +6,18 @@ module ToptranslationCli
 
     FILENAME = '.toptranslation.yml'
 
+    def initialize
+      @files_base_url = 'https://files.toptranslation.com'
+      @api_base_url = 'https://api.toptranslation.com'
+      @verbose = !ENV['VERBOSE'].nil?
+    end
+
     def load
       @project_identifier = configuration['project_identifier']
       @access_token = configuration['access_token']
+      @files_base_url = configuration['files_base_url'] || @files_base_url
+      @api_base_url = configuration['api_base_url'] || @api_base_url
       @files = configuration['files'] || []
-      @files_base_url = configuration['files_base_url'] || 'https://files.toptranslation.com'
-      @api_base_url = configuration['api_base_url'] || 'https://api.toptranslation.com'
-      @verbose = !ENV['VERBOSE'].nil?
     end
 
     def save
