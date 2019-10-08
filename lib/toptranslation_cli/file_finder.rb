@@ -34,7 +34,7 @@ module ToptranslationCli
 
       private
 
-        def add_remote_file(document, locale, translation)
+        def remote_file(document, locale, translation)
           {
             sha1: translation.sha1,
             identifier: document.identifier,
