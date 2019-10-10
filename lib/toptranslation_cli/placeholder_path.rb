@@ -35,6 +35,6 @@ class PlaceholderPath
       splits = string.split('{locale_code}') # (3)
       path = splits.map { |segment| "(#{segment})" }.join(locale_code) # (4)
 
-      Regexp.new(path)
+      Regexp.new(path, Regexp::IGNORECASE)
     end
 end
