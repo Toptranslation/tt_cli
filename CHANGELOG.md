@@ -1,3 +1,15 @@
+<a name="1.0.1"></a>
+### 1.0.1 (2019-10-08)
+
+#### Bug Fixes
+
+* rename a private method which was called by a a different name	 ([dc1e265](/../commit/dc1e265))
+* make regex for placeholder paths case insensitive	 ([fe1d0dd](/../commit/fe1d0dd))
+
+#### maintain
+
+* make tt init use the same configuration as the other commands	 ([6b7370c](/../commit/6b7370c))
+
 <a name="1.0.0"></a>
 ### 1.0.0 (2019-10-08)
 
