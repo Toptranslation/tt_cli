@@ -6,7 +6,6 @@ require 'pastel'
 
 module ToptranslationCli
   class Push # rubocop:disable Metrics/ClassLength
-
     class << self
       def run
         new.run
