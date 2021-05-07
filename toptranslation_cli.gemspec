@@ -30,7 +30,7 @@ Gem::Specification.new do |s| # rubocop:disable Metrics/BlockLength
   s.add_runtime_dependency 'tty-prompt', '~> 0.16'
   s.add_runtime_dependency 'tty-spinner', '~> 0.8'
   s.add_development_dependency 'pry'
-  s.add_development_dependency 'rake', '~> 10.0'
+  s.add_development_dependency 'rake', '~> 13.0.3'
   s.add_development_dependency 'rspec', '~> 3.4'
   s.add_development_dependency 'rubocop', '~> 1.14.0'
   s.add_development_dependency 'rubocop-rspec', '~> 2.3.0'
