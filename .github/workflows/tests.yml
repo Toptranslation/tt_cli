@@ -20,3 +20,8 @@ jobs:
 
     - name: Run RSpec and Rubocop
       run: bundle exec rake
+
+    - name: Bundle audit
+      run: |
+        gem install bundler-audit
+        bundle audit
