@@ -21,7 +21,7 @@ Gem::Specification.new do |s| # rubocop:disable Metrics/BlockLength
   s.homepage              = 'https://developer.toptranslation.com'
   s.license               = 'MIT'
   s.metadata              = { 'source_code_uri' => 'https://github.com/Toptranslation/tt_cli' }
-  s.required_ruby_version = '>= 2.3'
+  s.required_ruby_version = '>= 2.7'
 
   s.add_runtime_dependency 'pastel', '~> 0.7'
   s.add_runtime_dependency 'thor', '~> 0.20'
@@ -32,6 +32,6 @@ Gem::Specification.new do |s| # rubocop:disable Metrics/BlockLength
   s.add_development_dependency 'pry'
   s.add_development_dependency 'rake', '~> 10.0'
   s.add_development_dependency 'rspec', '~> 3.4'
-  s.add_development_dependency 'rubocop', '~> 0.79.0'
-  s.add_development_dependency 'rubocop-rspec', '~> 1.38.1'
+  s.add_development_dependency 'rubocop', '~> 1.14.0'
+  s.add_development_dependency 'rubocop-rspec', '~> 2.3.0'
 end
