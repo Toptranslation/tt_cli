@@ -20,19 +20,26 @@ module ToptranslationCli
       end
 
       def remote_files(project)
-        project_locales = project&.locales
         project&.documents&.each_with_object({}) do |document, files|
-          project_locales&.each do |locale|
-            translation = document.translations.find { |t| t.locale.code == locale.code }
+          project&.locales&.each do |locale|
+            translation = find_translation(document, locale)
             next unless translation
 
-            path = document.path.gsub('{locale_code}', locale.code)
+            path = document_path(document, locale)
             files[path] = remote_file(document, locale, translation)
           end
         end
       end
 
       private
+
+        def find_translation(document, locale)
+          document.translations.find { |t| t.locale.code == locale.code }
+        end
+
+        def document_path(document, locale)
+          document.path.gsub('{locale_code}', locale.code)
+        end
 
         def remote_file(document, locale, translation)
           {

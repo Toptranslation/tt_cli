@@ -32,19 +32,19 @@ module ToptranslationCli
 
         def check_access_token
           ToptranslationCli.configuration.load
-          if !ToptranslationCli.configuration.access_token.nil?
-            pastel.green('ok')
-          else
+          if ToptranslationCli.configuration.access_token.nil?
             pastel.red('access token missing from configuration file')
+          else
+            pastel.green('ok')
           end
         end
 
         def check_project_identifier
           ToptranslationCli.configuration.load
-          if !ToptranslationCli.configuration.project_identifier.nil?
-            pastel.green('ok')
-          else
+          if ToptranslationCli.configuration.project_identifier.nil?
             pastel.red('project_identifier missing from configuration file')
+          else
+            pastel.green('ok')
           end
         end
 
@@ -86,10 +86,10 @@ module ToptranslationCli
         def matching_files_output(path_definition)
           count = FileFinder.new(path_definition).files.count
 
-          if count != 0
-            pastel.green("#{count} matching files")
-          else
+          if count.zero?
             pastel.red('no matching files')
+          else
+            pastel.green("#{count} matching files")
           end
         end
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Enumerable
-  def in_chunks(chunks, flatten = false)
+  def in_chunks(chunks, flatten: false)
     chunk_size = [size, (size / chunks.to_f).ceil].select(&:positive?).min
     chunked = each_slice(chunk_size)
 
@@ -9,12 +9,10 @@ module Enumerable
     chunked
   end
 
-  def each_in_threads(num_threads, flatten = false)
+  def each_in_threads(num_threads, flatten: false, &block)
     in_chunks(num_threads, flatten).map do |chunk|
       Thread.new do
-        chunk.each do |item|
-          yield item
-        end
+        chunk.each(&block)
       end
     end.each(&:join)
   end
