@@ -7,8 +7,6 @@ require 'tty-progressbar'
 
 module ToptranslationCli
   class Pull
-    using Threaded
-
     def self.run
       new.run
     end

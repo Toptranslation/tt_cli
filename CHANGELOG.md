@@ -1,3 +1,10 @@
+<a name="1.0.2"></a>
+### 1.0.2 (2020-02-18)
+
+#### Bug Fixes
+
+* use monkeypatch instead of a refinement to define Enumerable#each_in_threads	 ([5a2a7d6](/../commit/5a2a7d6))
+
 <a name="1.0.1"></a>
 ### 1.0.1 (2019-10-08)
 
